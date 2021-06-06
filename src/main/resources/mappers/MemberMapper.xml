@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.demo.mapper.MemberMapper">
+	<select id="readAccount" parameterType="String" resultType="com.example.demo.vo.Member">
+		SELECT * FROM Member
+		WHERE id = #{id}
+	</select>
+	
+	<insert id="createMember" parameterType="com.example.demo.vo.Member">
+		INSERT INTO Member(id, pw, name, email, failCnt, isAccountNonExpired, isAccountNonLocked, 
+		                 isCredentialsNonExpired, isEnabled)
+		VALUES (#{id}, #{pw}, #{name}, #{email}, 0, 1, 1, 1, 1);
+	</insert>
+	
+	<update id="failCntUpdate" parameterType="String" >
+		UPDATE Member
+		SET failCnt = ifnull(failCnt, 0) + 1 
+		WHERE id = #{id}
+	</update>
+	
+	<select id="getFailCnt"  parameterType="String" resultType="com.example.demo.vo.Member">
+		SELECT failCnt, isEnabled 
+		FROM Member
+		WHERE id = #{id}
+	</select>
+	
+	<update id="changeEnabled" parameterType="String" >
+		UPDATE Member 
+		SET isEnabled = (CASE isEnabled WHEN 0 THEN 1 ELSE 0 END),
+			failCnt   = (CASE isEnabled WHEN 1 THEN 0 ELSE failCnt END)
+		WHERE id = #{id}
+	</update>
+		
+	<update id="resetFailCnt" parameterType="String" >
+		UPDATE Member
+		SET failCnt = 0
+		WHERE id = #{id}
+	</update>
+	
+	<select id="getAllMember" resultType="com.example.demo.vo.Member">
+		SELECT *
+		FROM Member
+	</select>
+</mapper>

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="utf-8">
+        <title>Tetris</title>
+        <link rel="stylesheet" type="text/css" href="/static/tetris.css">
+    </head>
+    <body>
+     <script type="text/javascript">
+     function add(){
+         var addForm = document.scoreForm;
+ 
+             addForm.submit();
+         
+     }
+    </script>
+    <span sec:authentication="name" id='span1' style="display:none"></span>
+        <div id="gameField">
+            <div id="gameover">
+                <center>
+                    <h1>Game Over</h1>
+                    <h4>Nname: </h4>
+                    <h4 id="Level">level: </h4>
+                    <h4 id="Score">score: </h4>
+
+                    <h4>press 'F5' to restart</h4>
+                     <input type = "button" value = "저장하기" onclick="add()">
+                </center>
+            </div>
+            <div id="pause">
+                    <h1>Pause</h1>
+                    <h4>press 'P' to return <br> press 'F5' to restart </h4>
+                </pcenter>
+            </div>
+            <table id="nextTable" border=0>
+                <tr><td id="00"></td><td id="01"></td><td id="02"></td><td id="03"></td></tr>
+                <tr><td id="10"></td><td id="11"></td><td id="12"></td><td id="13"></td></tr>
+                <tr><td id="20"></td><td id="21"></td><td id="22"></td><td id="23"></td></tr>
+                <tr><td id="30"></td><td id="31"></td><td id="32"></td><td id="33"></td></tr>
+            </table>
+            <div id="scoreField">
+                <p class="sub">LEVEL</p>
+                <p id="level">1</p>
+                <p class="sub">SCORE</p>
+                <p id="score">0</p>
+                <p class="sub">NEXT</p>
+                <p><br><br><br></p>
+                <p class="sub">HELP</p>
+                <p id="help">← ↓ →</p>
+                <p id="help">↑</p>
+                <p id="help">P to pause</p>
+                <p class="sub" id="about" onclick="info()">ABOUT</p>
+                <div id="comboField"><i></i></div>
+            </div>
+            <form action="/game/game1" method="post" name='scoreForm'>
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+            	<input type="hidden" id="ID" name="ID">
+				<input type="hidden"  name='Score'>
+            </form>
+            <script type="text/javascript" src="/static/tetris.js"></script>
+    </body>
+</html>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.demo.mapper.GameOneMapper">
+	<insert id="createRanking" parameterType="com.example.demo.vo.GameOne">
+		INSERT INTO Game1(ID, Score)
+		VALUES (#{ID}, #{Score});
+	</insert>
+	
+		 <select id="getReadRanking" resultType="com.example.demo.vo.GameOne">
+	 SELECT ID, Score FROM Game1 ORDER BY Score DESC;
+	 </select>
+</mapper>

@@ -1,0 +1,33 @@
+
+body {
+    color:#FFFFFF;
+    background-color: #ffffff;
+    
+}
+.log{
+    width: 1450px;
+    height: 150px;
+    margin : 100px;
+    background-color: rgb(22, 54, 238);
+}
+
+.login{
+    display: inline-block;
+    margin : 100px;
+    background-color: rgb(92, 201, 49);
+}
+
+.game{
+    margin : 100px;
+    text-align: center;
+    display: inline-block;
+    background-color: rgb(65, 56, 112);
+}
+
+.rank{
+    margin : 100px;
+    text-align: center;
+    display: inline-block;
+    background-color: rgb(43, 26, 139);
+}
+

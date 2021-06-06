@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>회원가입</title>
+  	<meta name="_csrf" th:content="${_csrf.token}"/>
+	<meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script>
+    	var isIdChecked = false;
+    	var isPasswordChecked = false;
+    	var isPasswordConfirmChecked = false;
+    	var isNameChecked = false;
+    	
+	    $(function(){
+	    	$('#id').blur(function(){
+	    		var token = $("meta[name='_csrf']").attr("content");
+	    		var header = $("meta[name='_csrf_header']").attr("content");
+	    		var id = $("#id").val();
+	    		
+	    		var idReg = /^[a-z0-9]{5,20}/g;
+	    		
+	    		// id 유효성 체크
+	    		if (id == "" || id === undefined || id == null || id.length == 0) {
+	    			$('#id_check').text("아이디를 입력하세요.");
+	    			isIdChecked = false;
+	    			return;
+	    		}
+	    		
+	    		if (!idReg.test(id)) {
+	    			$('#id_check').text("아이디는 영소문자 또는 숫자로 5 ~ 20자이어야 합니다.");
+	    			isIdChecked = false;
+	    			return;
+	    		}
+	    		    		
+	    		var jsonData = {
+	    			"id" : id
+	    		}
+	    		
+	    		$.ajax({
+	    			type: 'post',
+	    			contentType: 'application/json',
+	    			url: '/signup/idcheck',
+	    			data: JSON.stringify(jsonData), //check
+	    			beforeSend: function(xhr) { //check
+	    				xhr.setRequestHeader(header, token);
+	    			},
+	    			async: true, //check
+	    			cache: false, //check
+	    			success: function(res) {
+	    				console.log(res);
+	    				if (res.duplicate) {
+		    				$('#id_check').text("이미 사용중인 아이디입니다.");
+		    				$("input[name='id']").val("");
+		    				//$("input[name='id']").focus();
+		    				isIdChecked = false;
+	    				} else if (res.success) {
+	    					$('#id_check').text("사용할 수 있는 아이디입니다.");
+	    					//$("input[name='password']").focus();
+	    					isIdChecked = true;
+	    				}
+	    			},
+	    			error: function(error) {
+	    				alert(error.errorMsg);
+	    			}
+	    		});
+	    	});		    
+	    });
+	    //제이쿼리
+	    $(function(){
+	    	$('#pw').blur(function(){ //패스워드 유효성 검사
+	    		var pw = $("#pw").val();
+	    		
+	    		var num = pw.search(/[0-9]/g);
+	    		var eng = pw.search(/[a-z]/ig);
+	    		var spe = pw.search(/[`~!@@#$%^&*|₩₩₩'₩";:₩/?]/gi);
+	    		
+	    		 if (pw.length < 8 || pw.length > 16) {
+	    			 $('#password_check').text("8자리 ~ 16자리 이내로 입력해주세요.");
+	    			 $("input[name='pw']").val(""); //name = "***"인 input태그를 공백으로 바꿔줌 
+	    			 //$("input[name='password']").focus();
+	    			 isPasswordChecked = false;
+	    		 } else if(pw.search(/\s/) != -1){
+	    			 $('#password_check').text("비밀번호에 공백이 있을 수 없습니다.");
+	    			 $("input[name='pw']").val("");
+	    			 //$("input[name='password']").focus();
+	    			 isPasswordChecked = false;
+	    		 } else if(num < 0 || eng < 0 || spe < 0 ){
+	    			 $('#password_check').text("영문, 숫자, 특수문자를 혼합하여 입력해주세요.");
+	    			 $("input[name='pw']").val("");
+	    			 //$("input[name='password']").focus();
+	    			 isPasswordChecked = false;
+	    		 } else {
+	    			 $('#password_check').text("패스워드를 한번 더 입력해주세요."); //password_confirm 호출
+	    			 $("input[name='password_confirm']").val("");
+	    			 //$("input[name='password_confirm']").focus();
+	    			 isPasswordChecked = true;
+	    		}
+	    	});		    
+	    });
+	    
+	    $(function(){
+	    	$('#password_confirm').blur(function(){
+	    		var pw = $("#pw").val();
+	    		var pw_confirm = $("#password_confirm").val();
+	    		
+	    		 if (pw == pw_confirm) {
+	    			 $('#password_check').text("패스워드 유효성 검사가 완료됐습니다.");
+	    			 $("input[name='name']").val("");
+	    			 //$("input[name='name']").focus();
+	    			 isPasswordConfirmChecked = true;
+	    		 } else {
+	    			 $('#password_check').text("패스워드를 다르게 입력했습니다. 다시 입력하세요.");
+	    			 $("input[name='password_confirm']").val("");
+	    			 //$("input[name='password_confirm']").focus();
+	    			 isPasswordConfirmChecked = false;
+	    		 }
+	    	});		    
+	    });
+	    
+	    $(function(){
+	    	$('#name').blur(function(){ //이름 조건
+	    		var name = $("#name").val();
+	    		
+	    		 if (name == "" || name === undefined || name == null || name.length == 0) {
+	    			 $('#name_check').text("이름을 입력하세요.");
+	    			 $("input[name='name']").val("");
+	    			 //$("input[name='name']").focus();
+	    			 isNameChecked = false;
+	    		 } else if (name.length < 2 || name.length > 16) {
+	    			 $('#name_check').text("이름은 두 자 이상 입력되어야 합니다.");
+	    			 $("input[name='name']").val("");
+	    			 //$("input[name='name']").focus();
+	    			 isNameChecked = false;
+	    		 } else {
+	    			 $('#name_check').text("");
+	    			 $("input[name='birth']").val("");
+	    			 //$("input[name='birth']").focus();
+	    			 isNameChecked = true;
+	    		 }
+	    	});		    
+	    });
+	    
+	    function submit_btn_click () { //가입 button
+	    	if (!isIdChecked) {
+	    		alert("아이디를 확인하세요.");
+	    		return;
+	    	} else if (!isPasswordChecked || !isPasswordConfirmChecked) {
+	    		alert("패스워드를 확인하세요.");
+	    		return;
+	    	} else if (!isNameChecked) {
+	    		alert("이름을 확인하세요.");
+	    		return;
+	    	} else {
+	    		if (confirm("가입하시겠습니까?")) {
+				
+	    	    	$("#signup_form").submit(); 
+	    		} else {
+	    			return;
+	    		}
+	    	}
+	    }
+    </script>
+</head>
+<body>		
+    <h1>회원 가입</h1>
+    <hr>
+
+	*는 필수 입력 란입니다.<br/>
+    <form id="signup_form" th:action="@{/game/signup}" method="post" name = "signup_form">
+        아이디*: <input type="text" id="id" name="id"> <br/>
+        <div id="id_check"></div>
+        패스워드*: <input type="password" id="pw" name="pw"> <br/>
+        패스워드 확인*: <input type="password" id="password_confirm"><br/>
+        <div id="password_check"></div>
+        이름*: <input type="text" id="name" name="name"> <br/>
+        <div id="name_check"></div>
+        이메일: <input type="email" name="email"> <br/>
+
+    </form>
+    <button onClick="submit_btn_click()">가입하기</button>
+</body>
+</html>
