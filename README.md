@@ -1,1 +1,1 @@
-# Springboot_mybatis_sample
+# Capstone_2
